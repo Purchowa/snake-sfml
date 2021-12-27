@@ -30,17 +30,17 @@ int main()
 
 	// 1 second = 100 miliseconds = 1'000'000 microseconds
 	const unsigned int animation_frame_duration = 16'600; // microseconds
-	const unsigned int logic_frame_duration = 2'500;
-	const unsigned int snake_frame_duration = 125'000;
+	const unsigned int logic_frame_duration = 4'000;
+	const unsigned int snake_frame_duration = 120'000;
 
 	unsigned long long animation_frame_time{};
 	unsigned long long logic_frame_time{};
 	unsigned long long snake_frame_time{};
 	unsigned long long current_program_time{}; // current time of all frames
 
-	const sf::Vector2f map_size{ 600, 600 };
-	const sf::Vector2f map_position{500, 50};
-	const sf::Vector2f snake_size{ 20, 20 };
+	const sf::Vector2f map_size { 600, 200 };
+	const sf::Vector2f map_position {500, 50};
+	const sf::Vector2f snake_size {20, 20};
 
 	// Lambda function 
 	auto checkProportions = [](const sf::Vector2f& map_size, const sf::Vector2f& head_size) -> bool
@@ -99,6 +99,8 @@ int main()
 			Kolizja zostanie wykryta wczesniej niz snake zostanie narysowany.
 			Zostanie natomiast zmieniona jego pozycja , gdyz klatki 'logiczne' wykonuja sie wczesniej.
 		*/
+
+		snake.BodyColission();
 
 		while (AppWindow.pollEvent(event))
 		{

@@ -19,21 +19,27 @@ private:
 	void defaultSnakePos();
 	void rotateHeadVertices(const int& angle);
 	void addSnakePart();
+	bool contains(const sf::Vector2f& point, const sf::Vertex quad[]) const;
+	void initApple(const sf::Color& apple_color);
 	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
 	// ---- Initialization list order ----
-	const int part_quantity;
-	sf::Vector2f move;
+	const unsigned VERTICES_NUMBER;
+	const unsigned PART_QUANTITY;
+	const sf::Color SNAKE_PART_COLOR;
 	sf::Vector2f head_size;
+	sf::Vector2f move;
 	unsigned int score;
 	sf::Vector2f map_pos;
 	sf::Vector2f map_size;
 	bool is_collided;
+	sf::RectangleShape apple;
 	// -------------------------------------
 
-	sf::Vector2f snake_head_vertices[4];
+	sf::Vector2f head_vertices[4];
 	std::vector<sf::Vector2f> last_part_position;
-	std::vector<sf::Vertex> snake_part_vertices;
+	std::vector<sf::Vertex> part_vertices;
+
 
 	// --- SnakeHead Class ---
 	class CSnakeHead : public sf::Drawable, public sf::Transformable
@@ -42,7 +48,6 @@ private:
 		CSnakeHead(const sf::Vector2f& h_size, const sf::Vector2f& t_size);
 		void setSizeHead(const sf::Vector2f& h_size);
 		void setFillColorHead(const sf::Color& h_color);
-		
 		void setSizeTongue(const sf::Vector2f& t_size);
 		void setFillColorTongue(const sf::Color& t_color);
 

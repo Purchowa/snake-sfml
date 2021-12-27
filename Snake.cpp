@@ -1,46 +1,44 @@
 #include "Snake.h"
 
 Snake::Snake(const sf::Vector2f& head_size, const int& part_len, const sf::Vector2f& map_pos, const sf::Vector2f& map_size)
-	: part_quantity(part_len), move{ 0.f, 0.f }, head_size(head_size),
-	 score(0), map_pos(map_pos), map_size(map_size),
+	: VERTICES_NUMBER(4), PART_QUANTITY(part_len), SNAKE_PART_COLOR({ 255, 128, 0, 220 }),
+	move{ 0.f, 0.f }, head_size(head_size),
+	score(0), map_pos(map_pos), map_size(map_size),
 	snake_head({ head_size }, { head_size.x / 7.f, head_size.y / 1.5f }), is_collided(false)
 {
 	snake_head.setOrigin(head_size / 2.f);
 	snake_head.setFillColorHead(sf::Color::Red);
 	snake_head.setFillColorTongue(sf::Color(0, 128, 0, 230));
 
-	snake_part_vertices.reserve(part_quantity * 4); // times 4 for all vertices 
-	last_part_position.reserve(part_quantity * 4);
+	int part_capacity = PART_QUANTITY * VERTICES_NUMBER;
+	part_vertices.reserve(part_capacity);
+	last_part_position.reserve(part_capacity);
 
-	for (int i = 0; i < 8; i++)
+	for (int i = 0; i < 2 * VERTICES_NUMBER; i++)
 	{
-		snake_part_vertices.emplace_back();
+		part_vertices.emplace_back();
 		last_part_position.emplace_back();
-		snake_part_vertices[i].color = sf::Color(sf::Color(255, 128, 0, 220));
+		part_vertices[i].color = SNAKE_PART_COLOR;
 	}
 
 	/*
-	snake_part_vertices[0].color = sf::Color::Red;
-	snake_part_vertices[1].color = sf::Color::Yellow;
-	snake_part_vertices[2].color = sf::Color::Yellow;
-	snake_part_vertices[3].color = sf::Color::Red;
+	part_vertices[0].color = sf::Color::Red;
+	part_vertices[1].color = sf::Color::Yellow;
+	part_vertices[2].color = sf::Color::Yellow;
+	part_vertices[3].color = sf::Color::Red;
 
-	snake_part_vertices[4].color = sf::Color::Yellow;
-	snake_part_vertices[5].color = sf::Color::Red;
-	snake_part_vertices[6].color = sf::Color::Red;
-	snake_part_vertices[7].color = sf::Color::Yellow;
+	part_vertices[4].color = sf::Color::Yellow;
+	part_vertices[5].color = sf::Color::Red;
+	part_vertices[6].color = sf::Color::Red;
+	part_vertices[7].color = sf::Color::Yellow;
 	*/
 
 	this->defaultSnakePos();
 
+	this->initApple(sf::Color(0, 124, 15));
+
 	// When substracting from Y coord you will move up in XY plane not down...
 
-	/*
-	1 2
-	0 3 1 2
-		0 3 5 6
-			4 7
-	*/
 	return;
 
 }
@@ -94,7 +92,7 @@ void Snake::KeyEvent(const sf::Event& event)
 	}
 	case sf::Keyboard::G:
 	{
-		if (score < part_quantity)
+		if (score < PART_QUANTITY)
 		{
 			addSnakePart();
 			score++;
@@ -131,27 +129,27 @@ void Snake::UpdatePosition()
 {
 	if (move != sf::Vector2f{ 0.f, 0.f } && !is_collided)
 	{
-		for (unsigned i = 0; i < 4; i++)
+		for (unsigned i = 0; i < VERTICES_NUMBER; i++)
 		{
-			last_part_position[i] = snake_head_vertices[i]; 
-			// Giving last_part_position current head_position
-			// Only for one element behind the head
+			last_part_position[i] = head_vertices[i]; 
+			// Assigning to last_part_position, current head_position
+			// Only for one part behind the head
 		}
-		for (unsigned i = 4, j = 0; i < last_part_position.size() && j < snake_part_vertices.size(); i++, j++)
+		for (unsigned i = VERTICES_NUMBER, j = 0; i < last_part_position.size() && j < part_vertices.size(); i++, j++)
 		{
-			last_part_position[i] = snake_part_vertices[j].position;
+			last_part_position[i] = part_vertices[j].position;
 		}
 
 		snake_head.move(move);
 		// Moving head
 		
-		for (unsigned i = 0; i < 4; i++)
+		for (unsigned i = 0; i < VERTICES_NUMBER; i++)
 		{
-			snake_head_vertices[i] += move; 
+			head_vertices[i] += move; 
 		}
-		for (unsigned i = 0; i < snake_part_vertices.size(); i++)
+		for (unsigned i = 0; i < part_vertices.size(); i++)
 		{
-			snake_part_vertices[i].position = last_part_position[i];
+			part_vertices[i].position = last_part_position[i];
 			// Giving current part_vertices previous position of head and other parts
 		}
 	}
@@ -173,11 +171,21 @@ void Snake::MapColission()
 	}
 
 	return;
-} // HEY sproboj uzyc jezyka jako collider bo on troche wystaje i moze by siadlo
+}
 
 void Snake::BodyColission()
 {
-
+	/*
+		Starting from 8th index because collision can't happen on first two parts
+	*/
+	for (unsigned i = 2 * VERTICES_NUMBER; i < part_vertices.size(); i += VERTICES_NUMBER)
+	{
+		if (Snake::contains(snake_head.getPosition(), &part_vertices[i]))
+		{
+			move = { 0.f, 0.f };
+			return;
+		}
+	}
 	return;
 }
 
@@ -205,26 +213,31 @@ void Snake::defaultSnakePos()
 	float sx = snake_head.getPosition().x;
 	float sy = snake_head.getPosition().y;
 
-	snake_head_vertices[0] = { sx - ax, sy + ax };
-	snake_head_vertices[1] = { sx - ax, sy - ax };
-	snake_head_vertices[2] = { sx + ax, sy - ax };
-	snake_head_vertices[3] = { sx + ax, sy + ax };
+	head_vertices[0] = { sx - ax, sy + ax };
+	head_vertices[1] = { sx - ax, sy - ax };
+	head_vertices[2] = { sx + ax, sy - ax };
+	head_vertices[3] = { sx + ax, sy + ax };
 
-	if (snake_part_vertices.size() > 8) // size - returns number of elements
+	if (part_vertices.size() > 2 * VERTICES_NUMBER) // size - returns number of elements. Erasing past second part
 	{
-		snake_part_vertices.erase(snake_part_vertices.begin() + 6, snake_part_vertices.begin() + 6 + score * 4);
-		last_part_position.erase(last_part_position.begin() + 6, last_part_position.begin() + 6 + score * 4);
+		std::vector <sf::Vertex>::iterator iter_part_vertices = part_vertices.begin() + 7;
+		std::vector <sf::Vector2f>::iterator iter_part_pos = last_part_position.begin() + 7;
+		// Begin returns iterator to 1st element. Adding 7 results in iterator to 8th element.
+
+		part_vertices.erase(iter_part_vertices, iter_part_vertices + score * VERTICES_NUMBER);
+		last_part_position.erase(iter_part_pos, iter_part_pos + score * VERTICES_NUMBER);
+		// Erasing set -> [iterator, last_iterator) 
 	}
 
-	snake_part_vertices[0].position = { snake_head_vertices[1].x, snake_head_vertices[1].y + 2 * snake_head.getHeadSize().y };
-	snake_part_vertices[1].position = snake_head_vertices[0];
-	snake_part_vertices[2].position = snake_head_vertices[3];
-	snake_part_vertices[3].position = { snake_head_vertices[2].x, snake_head_vertices[2].y + 2 * snake_head.getHeadSize().y };
+	part_vertices[0].position = { head_vertices[1].x, head_vertices[1].y + 2 * snake_head.getHeadSize().y };
+	part_vertices[1].position = head_vertices[0];
+	part_vertices[2].position = head_vertices[3];
+	part_vertices[3].position = { head_vertices[2].x, head_vertices[2].y + 2 * snake_head.getHeadSize().y };
 
-	snake_part_vertices[4].position = { snake_head_vertices[1].x, snake_head_vertices[1].y + 3 * snake_head.getHeadSize().y };
-	snake_part_vertices[5].position = snake_part_vertices[0].position;
-	snake_part_vertices[6].position = snake_part_vertices[3].position;
-	snake_part_vertices[7].position = { snake_head_vertices[2].x, snake_head_vertices[2].y + 3 * snake_head.getHeadSize().y };
+	part_vertices[4].position = { head_vertices[1].x, head_vertices[1].y + 3 * snake_head.getHeadSize().y };
+	part_vertices[5].position = part_vertices[0].position;
+	part_vertices[6].position = part_vertices[3].position;
+	part_vertices[7].position = { head_vertices[2].x, head_vertices[2].y + 3 * snake_head.getHeadSize().y };
 
 	score = 0;
 	return;
@@ -241,37 +254,37 @@ void Snake::rotateHeadVertices(const int& angle)
 	{
 	case 0: // UP
 	{
-		snake_head_vertices[0] = { sx - ax, sy + ax };
-		snake_head_vertices[1] = { sx - ax, sy - ax };
-		snake_head_vertices[2] = { sx + ax, sy - ax };
-		snake_head_vertices[3] = { sx + ax, sy + ax };
+		head_vertices[0] = { sx - ax, sy + ax };
+		head_vertices[1] = { sx - ax, sy - ax };
+		head_vertices[2] = { sx + ax, sy - ax };
+		head_vertices[3] = { sx + ax, sy + ax };
 		break;
 	}
 
 	case 270: // LEFT
 	{
-		snake_head_vertices[0] = { sx + ax, sy + ax };
-		snake_head_vertices[1] = { sx - ax, sy + ax };
-		snake_head_vertices[2] = { sx - ax, sy - ax };
-		snake_head_vertices[3] = { sx + ax, sy - ax };
+		head_vertices[0] = { sx + ax, sy + ax };
+		head_vertices[1] = { sx - ax, sy + ax };
+		head_vertices[2] = { sx - ax, sy - ax };
+		head_vertices[3] = { sx + ax, sy - ax };
 		break;
 	}
 
 	case 180: // DOWN
 	{
-		snake_head_vertices[0] = { sx + ax, sy - ax };
-		snake_head_vertices[1] = { sx + ax, sy + ax };
-		snake_head_vertices[2] = { sx - ax, sy + ax };
-		snake_head_vertices[3] = { sx - ax, sy - ax };
+		head_vertices[0] = { sx + ax, sy - ax };
+		head_vertices[1] = { sx + ax, sy + ax };
+		head_vertices[2] = { sx - ax, sy + ax };
+		head_vertices[3] = { sx - ax, sy - ax };
 		break;
 	}
 
 	case 90: // RIGHT
 	{
-		snake_head_vertices[0] = { sx - ax, sy - ax };
-		snake_head_vertices[1] = { sx + ax, sy - ax };
-		snake_head_vertices[2] = { sx + ax, sy + ax };
-		snake_head_vertices[3] = { sx - ax, sy + ax };
+		head_vertices[0] = { sx - ax, sy - ax };
+		head_vertices[1] = { sx + ax, sy - ax };
+		head_vertices[2] = { sx + ax, sy + ax };
+		head_vertices[3] = { sx - ax, sy + ax };
 		break;
 	}
 
@@ -284,23 +297,52 @@ void Snake::rotateHeadVertices(const int& angle)
 
 void Snake::addSnakePart()
 {
-	for (int i = 0; i < 4; i++)
+	for (int i = 0; i < VERTICES_NUMBER; i++)
 	{
-		snake_part_vertices.emplace_back();
+		part_vertices.emplace_back();
 		last_part_position.emplace_back();
 	}
 
-	for (int i = snake_part_vertices.size() - 4; i < snake_part_vertices.size(); i++)
+	for (int i = part_vertices.size() - VERTICES_NUMBER; i < part_vertices.size(); i++)
 	{
-		snake_part_vertices[i].color = sf::Color(255, 128, 0, 220);
+		part_vertices[i].color = SNAKE_PART_COLOR;
 	}
 	return;
+}
+
+bool Snake::contains(const sf::Vector2f& point, const sf::Vertex quad[]) const
+{
+	sf::Vector2f center{ 
+		(quad[0].position.x + quad[2].position.x) * 0.5f,
+		(quad[0].position.y + quad[2].position.y) * 0.5f
+	};
+
+	if (point == center)
+		return true;
+
+	return false;
+}
+
+void Snake::initApple(const sf::Color& apple_color)
+{
+	sf::Vector2i randApple{
+		rand() % static_cast<int>(map_size.x / head_size.x),
+		rand() % static_cast<int>(map_size.y / head_size.y)
+	};
+
+	apple.setPosition(
+		{randApple.x * head_size.x + map_pos.x},
+		{randApple.y * head_size.y + map_pos.y}
+	);
+	apple.setFillColor(apple_color);
+	apple.setSize(head_size);
 }
 
 void Snake::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
 	target.draw(snake_head, states);
-	target.draw(&snake_part_vertices[0], snake_part_vertices.size(), sf::Quads);
+	target.draw(&part_vertices[0], part_vertices.size(), sf::Quads);
+	target.draw(apple);
 	return;
 }
 

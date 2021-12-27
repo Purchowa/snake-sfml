@@ -10,10 +10,15 @@ grid(true) == 3800fps --- almost zero fps drops
 grid(false) == 3800fps
 */
 
-Map::Map(const sf::Vector2f& size, const sf::Vector2f& position, const sf::Vector2f& head_size)
-	: snake_head_size(head_size), grid(true), grid_count((size.y / head_size.y) * 2, (size.x / head_size.x) * 2),
-	grid_line( sf::VertexArray(sf::Lines, grid_count.x), sf::VertexArray(sf::Lines, grid_count.y) )
+Map::Map(const sf::Vector2f& size, const sf::Vector2f& position, const sf::Vector2f& HEAD_SIZE)
+	: grid( true )
 {
+	const sf::Vector2f GRID_COUNT = { (size.x / HEAD_SIZE.x) * 2, (size.y / HEAD_SIZE.y) * 2 };
+	sf::Vector2f grid_startPos;
+	sf::Vector2f grid_endPos;
+
+	grid_line = sf::Vector2<sf::VertexArray>( sf::VertexArray(sf::Lines, GRID_COUNT.x), sf::VertexArray(sf::Lines, GRID_COUNT.y) ); // TO DO BUG
+
 	this->map_box.setSize(size);
 	this->map_box.setPosition(position); // left top corner
 
@@ -28,7 +33,8 @@ Map::Map(const sf::Vector2f& size, const sf::Vector2f& position, const sf::Vecto
 	
 	sf::Color grid_color{ 192, 192, 192, 64 };
 	unsigned int i = 0;
-	for (float x = grid_startPos.x; x < grid_endPos.x; x += snake_head_size.x)
+
+	for (float x = grid_startPos.x; x < grid_endPos.x; x += HEAD_SIZE.x)
 	{
 		grid_line.x[i].position = sf::Vector2f(x, grid_startPos.y);
 		grid_line.x[i].color = grid_color;
@@ -38,7 +44,7 @@ Map::Map(const sf::Vector2f& size, const sf::Vector2f& position, const sf::Vecto
 		i++;
 	}
 	i = 0;
-	for (float y = grid_startPos.y; y < grid_endPos.y; y += snake_head_size.y)
+	for (float y = grid_startPos.y; y < grid_endPos.y; y += HEAD_SIZE.y)
 	{
 		grid_line.y[i].position = sf::Vector2f(grid_startPos.x, y);
 		grid_line.y[i].color = grid_color;
@@ -49,6 +55,10 @@ Map::Map(const sf::Vector2f& size, const sf::Vector2f& position, const sf::Vecto
 	}
 	
 	return;
+}
+
+void Map::initLines()
+{
 }
 
 void Map::draw(sf::RenderTarget& AppWindow, sf::RenderStates states) const
