@@ -249,7 +249,7 @@ public:
 /// that just happened. Events are retrieved using the
 /// sf::Window::pollEvent and sf::Window::waitEvent functions.
 ///
-/// A sf::Event instance contains the type of the event
+/// A sf::Event instance shapeContaintsPoint the type of the event
 /// (mouse moved, key pressed, window closed, ...) as well
 /// as the details about this particular event. Please note that
 /// the event parameters are defined in a union, which means that

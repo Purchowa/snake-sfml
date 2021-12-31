@@ -11,13 +11,12 @@ grid(false) == 3800fps
 */
 
 Map::Map(const sf::Vector2f& size, const sf::Vector2f& position, const sf::Vector2f& HEAD_SIZE)
-	: grid( true )
+	: grid(true), GRID_COUNT( (size.x / HEAD_SIZE.x) * 2, (size.y / HEAD_SIZE.y) * 2 ),
+	grid_line( sf::VertexArray(sf::Lines, GRID_COUNT.x), sf::VertexArray(sf::Lines, GRID_COUNT.y) )
 {
-	const sf::Vector2f GRID_COUNT = { (size.x / HEAD_SIZE.x) * 2, (size.y / HEAD_SIZE.y) * 2 };
 	sf::Vector2f grid_startPos;
 	sf::Vector2f grid_endPos;
-
-	grid_line = sf::Vector2<sf::VertexArray>( sf::VertexArray(sf::Lines, GRID_COUNT.x), sf::VertexArray(sf::Lines, GRID_COUNT.y) ); // TO DO BUG
+	const sf::Color grid_color{ 192, 192, 192, 64 };
 
 	this->map_box.setSize(size);
 	this->map_box.setPosition(position); // left top corner
@@ -25,15 +24,14 @@ Map::Map(const sf::Vector2f& size, const sf::Vector2f& position, const sf::Vecto
 	this->map_box.setFillColor(sf::Color::Black);
 	this->map_box.setOutlineThickness(1.f);
 
+	// Initializing grid
 	grid_startPos.x = position.x;
 	grid_startPos.y = position.y;
 
 	grid_endPos.x = position.x + size.x;
 	grid_endPos.y = position.y + size.y;
-	
-	sf::Color grid_color{ 192, 192, 192, 64 };
-	unsigned int i = 0;
 
+	unsigned int i = 0;
 	for (float x = grid_startPos.x; x < grid_endPos.x; x += HEAD_SIZE.x)
 	{
 		grid_line.x[i].position = sf::Vector2f(x, grid_startPos.y);
@@ -55,10 +53,6 @@ Map::Map(const sf::Vector2f& size, const sf::Vector2f& position, const sf::Vecto
 	}
 	
 	return;
-}
-
-void Map::initLines()
-{
 }
 
 void Map::draw(sf::RenderTarget& AppWindow, sf::RenderStates states) const

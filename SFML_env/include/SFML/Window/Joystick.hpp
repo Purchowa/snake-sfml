@@ -176,7 +176,7 @@ public:
 /// \ingroup window
 ///
 /// sf::Joystick provides an interface to the state of the
-/// joysticks. It only contains static functions, so it's not
+/// joysticks. It only shapeContaintsPoint static functions, so it's not
 /// meant to be instantiated. Instead, each joystick is identified
 /// by an index that is passed to the functions of this class.
 ///

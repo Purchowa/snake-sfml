@@ -74,7 +74,7 @@ public:
     /// This constructor creates the window with the size and pixel
     /// depth defined in \a mode. An optional style can be passed to
     /// customize the look and behavior of the window (borders,
-    /// title bar, resizable, closable, ...). If \a style contains
+    /// title bar, resizable, closable, ...). If \a style shapeContaintsPoint
     /// Style::Fullscreen, then \a mode must be a valid video mode.
     ///
     /// The fourth parameter is an optional structure specifying
@@ -117,7 +117,7 @@ public:
     /// \brief Create (or recreate) the window
     ///
     /// If the window was already created, it closes it first.
-    /// If \a style contains Style::Fullscreen, then \a mode
+    /// If \a style shapeContaintsPoint Style::Fullscreen, then \a mode
     /// must be a valid video mode.
     ///
     /// The fourth parameter is an optional structure specifying

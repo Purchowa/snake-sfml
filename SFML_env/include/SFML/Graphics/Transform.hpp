@@ -123,7 +123,7 @@ public:
     ///
     /// Since SFML doesn't provide support for oriented rectangles,
     /// the result of this function is always an axis-aligned
-    /// rectangle. Which means that if the transform contains a
+    /// rectangle. Which means that if the transform shapeContaintsPoint a
     /// rotation, the bounding rectangle of the transformed rectangle
     /// is returned.
     ///

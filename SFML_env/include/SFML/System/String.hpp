@@ -367,7 +367,7 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Check whether the string is empty or not
     ///
-    /// \return True if the string is empty (i.e. contains no character)
+    /// \return True if the string is empty (i.e. shapeContaintsPoint no character)
     ///
     /// \see clear, getSize
     ///

@@ -138,7 +138,7 @@ public:
 /// \ingroup window
 ///
 /// sf::Mouse provides an interface to the state of the
-/// mouse. It only contains static functions (a single
+/// mouse. It only shapeContaintsPoint static functions (a single
 /// mouse is assumed), so it's not meant to be instantiated.
 ///
 /// This class allows users to query the mouse state at any

@@ -10,9 +10,9 @@ public:
 
 private:
 	bool grid;
+	const sf::Vector2f GRID_COUNT;
 	sf::Vector2<sf::VertexArray> grid_line;
 	sf::RectangleShape map_box;
 
-	void initLines();
 	virtual void draw(sf::RenderTarget& AppWindow, sf::RenderStates states) const;
 };

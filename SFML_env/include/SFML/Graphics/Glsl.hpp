@@ -200,7 +200,7 @@ namespace Glsl
 /// \namespace sf::Glsl
 /// \ingroup graphics
 ///
-/// \details The sf::Glsl namespace contains types that match
+/// \details The sf::Glsl namespace shapeContaintsPoint types that match
 /// their equivalents in GLSL, the OpenGL shading language.
 /// These types are exclusively used by the sf::Shader class.
 ///

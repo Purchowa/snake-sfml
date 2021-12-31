@@ -86,7 +86,7 @@ int main()
 		// ---------- LOGIC ----------
 		if (current_program_time - snake_frame_time > snake_frame_duration)
 		{
-			snake.UpdatePosition();
+			snake.updatePositionSnake();
 			text.setString(text_content + std::to_string(snake.getScore()) + "\n" + snake.getHeadPosition());
 			while (snake_frame_time + snake_frame_duration < current_program_time)
 			{
@@ -94,13 +94,14 @@ int main()
 			}
 		}
 
-		snake.MapColission(); 
+		snake.mapColission(); 
 		/* 
 			Kolizja zostanie wykryta wczesniej niz snake zostanie narysowany.
 			Zostanie natomiast zmieniona jego pozycja , gdyz klatki 'logiczne' wykonuja sie wczesniej.
 		*/
 
-		snake.BodyColission();
+		snake.bodyColission();
+		snake.appleCollision();
 
 		while (AppWindow.pollEvent(event))
 		{
@@ -110,7 +111,7 @@ int main()
 				return 0;
 			}
 			if (event.type == sf::Event::KeyPressed)
-				snake.KeyEvent(event);
+				snake.keyEvent(event);
 		}
 		// ----------------------------
 		current_program_time = clock.getElapsedTime().asMicroseconds();

@@ -93,7 +93,7 @@ public:
 /// \ingroup window
 ///
 /// sf::Touch provides an interface to the state of the
-/// touches. It only contains static functions, so it's not
+/// touches. It only shapeContaintsPoint static functions, so it's not
 /// meant to be instantiated.
 ///
 /// This class allows users to query the touches state at any

@@ -36,6 +36,9 @@
     <ClCompile Include="Map.cpp">
       <Filter>Pliki źródłowe\Map</Filter>
     </ClCompile>
+    <ClCompile Include="Apple.cpp">
+      <Filter>Pliki źródłowe</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Map.h">
@@ -43,6 +46,9 @@
     </ClInclude>
     <ClInclude Include="Snake.h">
       <Filter>Pliki nagłówkowe\Snake</Filter>
+    </ClInclude>
+    <ClInclude Include="Apple.h">
+      <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -130,7 +130,7 @@ public:
     ///
     /// \return True if rectangles overlap, false otherwise
     ///
-    /// \see contains
+    /// \see shapeContaintsPoint
     ///
     ////////////////////////////////////////////////////////////
     bool intersects(const Rect<T>& rectangle) const;
@@ -146,7 +146,7 @@ public:
     ///
     /// \return True if rectangles overlap, false otherwise
     ///
-    /// \see contains
+    /// \see shapeContaintsPoint
     ///
     ////////////////////////////////////////////////////////////
     bool intersects(const Rect<T>& rectangle, Rect<T>& intersection) const;
@@ -242,8 +242,8 @@ typedef Rect<float> FloatRect;
 /// sf::IntRect r2(position, size);
 ///
 /// // Test intersections with the point (3, 1)
-/// bool b1 = r1.contains(3, 1); // true
-/// bool b2 = r2.contains(3, 1); // false
+/// bool b1 = r1.shapeContaintsPoint(3, 1); // true
+/// bool b2 = r2.shapeContaintsPoint(3, 1); // false
 ///
 /// // Test the intersection between r1 and r2
 /// sf::IntRect result;

@@ -2,7 +2,7 @@
 
 Snake::Snake(const sf::Vector2f& head_size, const int& part_len, const sf::Vector2f& map_pos, const sf::Vector2f& map_size)
 	: VERTICES_NUMBER(4), PART_QUANTITY(part_len), SNAKE_PART_COLOR({ 255, 128, 0, 220 }),
-	move{ 0.f, 0.f }, head_size(head_size),
+	move{ 0.f, 0.f }, HEAD_SIZE(head_size),
 	score(0), map_pos(map_pos), map_size(map_size),
 	snake_head({ head_size }, { head_size.x / 7.f, head_size.y / 1.5f }), is_collided(false)
 {
@@ -32,12 +32,11 @@ Snake::Snake(const sf::Vector2f& head_size, const int& part_len, const sf::Vecto
 	part_vertices[6].color = sf::Color::Red;
 	part_vertices[7].color = sf::Color::Yellow;
 	*/
+	// When substracting from Y coord you will move up in XY plane not down...
 
 	this->defaultSnakePos();
 
-	this->initApple(sf::Color(0, 124, 15));
-
-	// When substracting from Y coord you will move up in XY plane not down...
+	this->initApple(sf::Color::Green);
 
 	return;
 
@@ -47,7 +46,7 @@ Snake::~Snake()
 	return;
 }
 
-void Snake::KeyEvent(const sf::Event& event)
+void Snake::keyEvent(const sf::Event& event)
 {
 	float wanted_rotation{};
 	sf::Vector2f wanted_move{};
@@ -59,33 +58,36 @@ void Snake::KeyEvent(const sf::Event& event)
 	case sf::Keyboard::Up:
 	{
 		wanted_rotation = 0.f;
-		wanted_move = { 0.f, -head_size.y };
+		wanted_move = { 0.f, -HEAD_SIZE.y };
 		break;
 	}
 		
 	case sf::Keyboard::Left:
 	{
 		wanted_rotation = 270.f;
-		wanted_move = { -head_size.x, 0.f };
+		wanted_move = { -HEAD_SIZE.x, 0.f };
 		break;
 	}
 
 	case sf::Keyboard::Down:
 	{
 		wanted_rotation = 180.f;
-		wanted_move = { 0.f, head_size.y };
+		wanted_move = { 0.f, HEAD_SIZE.y };
 		break;
 	}
 
 	case sf::Keyboard::Right:
 	{
 		wanted_rotation = 90.f;
-		wanted_move = { head_size.x, 0.f };
+		wanted_move = { HEAD_SIZE.x, 0.f };
 		break;
 	}
 
-	case sf::Keyboard::F:
+	case sf::Keyboard::S:
 	{
+		/*
+			If last_position wasn't set to 0, snake wouldn't move afeter stop.
+		*/
 		move = { 0.f , 0.f };
 		last_position = { 0.f, 0.f };
 		return;
@@ -118,14 +120,14 @@ void Snake::KeyEvent(const sf::Event& event)
 	if (abs(wanted_rotation - snake_head.getRotation()) != 180.f && last_position != snake_head.getPosition())
 	{
 		snake_head.setRotation(wanted_rotation);
-		rotateHeadVertices(static_cast<int>(wanted_rotation));
+		// rotateHeadVertices(static_cast<int>(wanted_rotation)); <-- Not needed in static colors of parts and head
 		move = wanted_move;
 		last_position = snake_head.getPosition();
 	}
 	return;
 }
 
-void Snake::UpdatePosition()
+void Snake::updatePositionSnake()
 {
 	if (move != sf::Vector2f{ 0.f, 0.f } && !is_collided)
 	{
@@ -157,7 +159,7 @@ void Snake::UpdatePosition()
 	return;
 }
 
-void Snake::MapColission()
+void Snake::mapColission()
 {
 	if (snake_head.getPosition().x < map_pos.x + 10|| 
 		snake_head.getPosition().x > map_pos.x + map_size.x ||
@@ -173,18 +175,27 @@ void Snake::MapColission()
 	return;
 }
 
-void Snake::BodyColission()
+void Snake::bodyColission()
 {
 	/*
 		Starting from 8th index because collision can't happen on first two parts
 	*/
 	for (unsigned i = 2 * VERTICES_NUMBER; i < part_vertices.size(); i += VERTICES_NUMBER)
 	{
-		if (Snake::contains(snake_head.getPosition(), &part_vertices[i]))
+		if (Snake::shapeContaintsPoint(&part_vertices[i], snake_head.getPosition()))
 		{
 			move = { 0.f, 0.f };
 			return;
 		}
+	}
+	return;
+}
+
+void Snake::appleCollision()
+{
+	if (snake_head.getPosition() == apple.getPosition())
+	{
+		std::cout << apple.getPosition().x << "\n";
 	}
 	return;
 }
@@ -208,8 +219,8 @@ void Snake::defaultSnakePos()
 
 		});
 
-	float ax = 0.5 * snake_head.getHeadSize().x;
-	float ay = 0.5 * snake_head.getHeadSize().y;
+	float ax = 0.5 * HEAD_SIZE.x;
+	float ay = 0.5 * HEAD_SIZE.y;
 	float sx = snake_head.getPosition().x;
 	float sy = snake_head.getPosition().y;
 
@@ -218,26 +229,26 @@ void Snake::defaultSnakePos()
 	head_vertices[2] = { sx + ax, sy - ax };
 	head_vertices[3] = { sx + ax, sy + ax };
 
-	if (part_vertices.size() > 2 * VERTICES_NUMBER) // size - returns number of elements. Erasing past second part
+	if (part_vertices.size() > (size_t)2 * VERTICES_NUMBER) // size - returns number of elements. Erasing past second part
 	{
 		std::vector <sf::Vertex>::iterator iter_part_vertices = part_vertices.begin() + 7;
 		std::vector <sf::Vector2f>::iterator iter_part_pos = last_part_position.begin() + 7;
 		// Begin returns iterator to 1st element. Adding 7 results in iterator to 8th element.
 
-		part_vertices.erase(iter_part_vertices, iter_part_vertices + score * VERTICES_NUMBER);
-		last_part_position.erase(iter_part_pos, iter_part_pos + score * VERTICES_NUMBER);
+		part_vertices.erase(iter_part_vertices, iter_part_vertices + (size_t)score * VERTICES_NUMBER);
+		last_part_position.erase(iter_part_pos, iter_part_pos + (size_t)score * VERTICES_NUMBER);
 		// Erasing set -> [iterator, last_iterator) 
 	}
 
-	part_vertices[0].position = { head_vertices[1].x, head_vertices[1].y + 2 * snake_head.getHeadSize().y };
+	part_vertices[0].position = { head_vertices[1].x, head_vertices[1].y + 2 * HEAD_SIZE.y };
 	part_vertices[1].position = head_vertices[0];
 	part_vertices[2].position = head_vertices[3];
-	part_vertices[3].position = { head_vertices[2].x, head_vertices[2].y + 2 * snake_head.getHeadSize().y };
+	part_vertices[3].position = { head_vertices[2].x, head_vertices[2].y + 2 * HEAD_SIZE.y };
 
-	part_vertices[4].position = { head_vertices[1].x, head_vertices[1].y + 3 * snake_head.getHeadSize().y };
+	part_vertices[4].position = { head_vertices[1].x, head_vertices[1].y + 3 * HEAD_SIZE.y };
 	part_vertices[5].position = part_vertices[0].position;
 	part_vertices[6].position = part_vertices[3].position;
-	part_vertices[7].position = { head_vertices[2].x, head_vertices[2].y + 3 * snake_head.getHeadSize().y };
+	part_vertices[7].position = { head_vertices[2].x, head_vertices[2].y + 3 * HEAD_SIZE.y };
 
 	score = 0;
 	return;
@@ -245,8 +256,8 @@ void Snake::defaultSnakePos()
 
 void Snake::rotateHeadVertices(const int& angle)
 {
-	float ax = 0.5 * head_size.x;
-	float ay = 0.5 * head_size.y;
+	float ax = 0.5 * HEAD_SIZE.x;
+	float ay = 0.5 * HEAD_SIZE.y;
 	float sx = snake_head.getPosition().x;
 	float sy = snake_head.getPosition().y;
 
@@ -296,13 +307,15 @@ void Snake::rotateHeadVertices(const int& angle)
 }
 
 void Snake::addSnakePart()
-{
+{ 
+	// Adding 4 elements at the end of vector
 	for (int i = 0; i < VERTICES_NUMBER; i++)
 	{
 		part_vertices.emplace_back();
 		last_part_position.emplace_back();
 	}
 
+	// Giving them color
 	for (int i = part_vertices.size() - VERTICES_NUMBER; i < part_vertices.size(); i++)
 	{
 		part_vertices[i].color = SNAKE_PART_COLOR;
@@ -310,7 +323,7 @@ void Snake::addSnakePart()
 	return;
 }
 
-bool Snake::contains(const sf::Vector2f& point, const sf::Vertex quad[]) const
+bool Snake::shapeContaintsPoint(const sf::Vertex quad[], const sf::Vector2f& point) const
 {
 	sf::Vector2f center{ 
 		(quad[0].position.x + quad[2].position.x) * 0.5f,
@@ -326,16 +339,17 @@ bool Snake::contains(const sf::Vector2f& point, const sf::Vertex quad[]) const
 void Snake::initApple(const sf::Color& apple_color)
 {
 	sf::Vector2i randApple{
-		rand() % static_cast<int>(map_size.x / head_size.x),
-		rand() % static_cast<int>(map_size.y / head_size.y)
+		rand() % static_cast<int>(map_size.x / HEAD_SIZE.x),
+		rand() % static_cast<int>(map_size.y / HEAD_SIZE.y)
 	};
-
+	apple.setOrigin(snake_head.getOrigin());
 	apple.setPosition(
-		{randApple.x * head_size.x + map_pos.x},
-		{randApple.y * head_size.y + map_pos.y}
+		{randApple.x * HEAD_SIZE.x + map_pos.x + snake_head.getOrigin().x},
+		{randApple.y * HEAD_SIZE.y + map_pos.y + snake_head.getOrigin().y}
 	);
 	apple.setFillColor(apple_color);
-	apple.setSize(head_size);
+	apple.setSize(HEAD_SIZE);
+
 }
 
 void Snake::draw(sf::RenderTarget& target, sf::RenderStates states) const
@@ -349,11 +363,10 @@ void Snake::draw(sf::RenderTarget& target, sf::RenderStates states) const
 // ----------- SnakeHead Class ----------
 
 Snake::CSnakeHead::CSnakeHead(const sf::Vector2f& h_size, const sf::Vector2f& t_size)
-	: head(h_size), tongue(t_size)
+	: head(h_size), tongue(t_size) // setting SIZE with constructor.
 {
 	tongue.setOrigin(tongue.getSize() / 2.f);
 	tongue.setPosition({ head.getSize().x / 2.f,  head.getSize().y / 4.f});
-	// nie mo¿na ustawiæ pozycji g³owy bo head nie ma ustawionego rozmiaru
 }
 
 void Snake::CSnakeHead::setSizeHead(const sf::Vector2f& h_size)
