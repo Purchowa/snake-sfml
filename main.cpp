@@ -3,10 +3,11 @@
 #include <iostream>
 #include "Map.h"
 #include "Snake.h"
-
+#include "Apple.h"
 
 int main()
 {
+
 	srand(time(NULL));
 	system("chcp 1250");
 	system("cls");
@@ -62,6 +63,7 @@ int main()
 	int snake_part_length = (map_size.x / snake_size.x) * (map_size.y / snake_size.y);
 	Snake snake(snake_size, snake_part_length, map_position, map_size);
 	Map myMap(map_size, map_position, snake_size);
+	Apple apple(sf::Color::Green);
 	//short fps{};
 
 
@@ -101,7 +103,7 @@ int main()
 		*/
 
 		snake.bodyColission();
-		snake.appleCollision();
+		apple.appleCollision();
 
 		while (AppWindow.pollEvent(event))
 		{
@@ -126,6 +128,7 @@ int main()
 			AppWindow.draw(text);
 			AppWindow.draw(myMap);
 			AppWindow.draw(snake);
+			AppWindow.draw(apple);
 			//  -----------------
 			AppWindow.display();
 

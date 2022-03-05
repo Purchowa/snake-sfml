@@ -7,12 +7,10 @@ class Snake : public sf::Drawable
 {
 public:
 	Snake(const sf::Vector2f& head_size, const int& part_len, const sf::Vector2f& map_pos, const sf::Vector2f& map_size);
-	~Snake();
 	void keyEvent(const sf::Event& event);
 	void updatePositionSnake();
 	void mapColission();
 	void bodyColission();
-	void appleCollision();
 	unsigned int getScore() const;
 	std::string getHeadPosition() const;
 
@@ -21,8 +19,6 @@ private:
 	void rotateHeadVertices(const int& angle);
 	void addSnakePart();
 	bool shapeContaintsPoint(const sf::Vertex quad[], const sf::Vector2f& point) const;
-
-	void initApple(const sf::Color& apple_color);
 
 	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
@@ -36,7 +32,6 @@ private:
 	sf::Vector2f map_pos;
 	sf::Vector2f map_size;
 	bool is_collided;
-	sf::RectangleShape apple;
 	// -------------------------------------
 
 	sf::Vector2f head_vertices[4];
@@ -53,7 +48,6 @@ private:
 		void setFillColorHead(const sf::Color& h_color);
 		void setSizeTongue(const sf::Vector2f& t_size);
 		void setFillColorTongue(const sf::Color& t_color);
-
 		sf::Vector2f getHeadSize() const;
 
 	private:
@@ -63,6 +57,5 @@ private:
 	};
 	// ------------------------
 
-protected:
 	CSnakeHead snake_head;
 };

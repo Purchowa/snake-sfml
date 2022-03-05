@@ -36,14 +36,9 @@ Snake::Snake(const sf::Vector2f& head_size, const int& part_len, const sf::Vecto
 
 	this->defaultSnakePos();
 
-	this->initApple(sf::Color::Green);
 
 	return;
 
-}
-Snake::~Snake()
-{
-	return;
 }
 
 void Snake::keyEvent(const sf::Event& event)
@@ -191,15 +186,6 @@ void Snake::bodyColission()
 	return;
 }
 
-void Snake::appleCollision()
-{
-	if (snake_head.getPosition() == apple.getPosition())
-	{
-		std::cout << apple.getPosition().x << "\n";
-	}
-	return;
-}
-
 unsigned int Snake::getScore() const
 {
 	return score;
@@ -323,40 +309,10 @@ void Snake::addSnakePart()
 	return;
 }
 
-bool Snake::shapeContaintsPoint(const sf::Vertex quad[], const sf::Vector2f& point) const
-{
-	sf::Vector2f center{ 
-		(quad[0].position.x + quad[2].position.x) * 0.5f,
-		(quad[0].position.y + quad[2].position.y) * 0.5f
-	};
-
-	if (point == center)
-		return true;
-
-	return false;
-}
-
-void Snake::initApple(const sf::Color& apple_color)
-{
-	sf::Vector2i randApple{
-		rand() % static_cast<int>(map_size.x / HEAD_SIZE.x),
-		rand() % static_cast<int>(map_size.y / HEAD_SIZE.y)
-	};
-	apple.setOrigin(snake_head.getOrigin());
-	apple.setPosition(
-		{randApple.x * HEAD_SIZE.x + map_pos.x + snake_head.getOrigin().x},
-		{randApple.y * HEAD_SIZE.y + map_pos.y + snake_head.getOrigin().y}
-	);
-	apple.setFillColor(apple_color);
-	apple.setSize(HEAD_SIZE);
-
-}
-
 void Snake::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
 	target.draw(snake_head, states);
 	target.draw(&part_vertices[0], part_vertices.size(), sf::Quads);
-	target.draw(apple);
 	return;
 }
 
@@ -405,3 +361,16 @@ void Snake::CSnakeHead::draw(sf::RenderTarget& target, sf::RenderStates states) 
 
 // ----------------------------------------
 
+// Protected
+bool Snake::shapeContaintsPoint(const sf::Vertex quad[], const sf::Vector2f& point) const
+{
+	sf::Vector2f center{
+		(quad[0].position.x + quad[2].position.x) * 0.5f,
+		(quad[0].position.y + quad[2].position.y) * 0.5f
+	};
+
+	if (point == center)
+		return true;
+
+	return false;
+}
