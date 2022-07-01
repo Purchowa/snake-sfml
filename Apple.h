@@ -8,7 +8,6 @@ class Apple : public sf::Drawable
 public:
 	Apple(const sf::Color& color);    
 	void appleCollision();
-
 private:
 	sf::RectangleShape apple;
 	void updatePositionApple();

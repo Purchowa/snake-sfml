@@ -11,7 +11,8 @@ grid(false) == 3800fps
 */
 
 Map::Map(const sf::Vector2f& size, const sf::Vector2f& position, const sf::Vector2f& HEAD_SIZE)
-	: grid(true), GRID_COUNT( (size.x / HEAD_SIZE.x) * 2, (size.y / HEAD_SIZE.y) * 2 ),
+	: MAP_SIZE(size), MAP_POSITION(position), grid(true),
+	GRID_COUNT( (size.x / HEAD_SIZE.x) * 2, (size.y / HEAD_SIZE.y) * 2 ),
 	grid_line( sf::VertexArray(sf::Lines, GRID_COUNT.x), sf::VertexArray(sf::Lines, GRID_COUNT.y) )
 {
 	sf::Vector2f grid_startPos;

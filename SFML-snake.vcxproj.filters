@@ -25,6 +25,12 @@
     <Filter Include="Pliki nagłówkowe\Snake">
       <UniqueIdentifier>{f5a01ffa-d04e-44c6-ba4e-880a11653ee7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Pliki źródłowe\Apple">
+      <UniqueIdentifier>{70243d1c-e8c6-4828-bb47-9dc539080f6c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Pliki nagłówkowe\Apple">
+      <UniqueIdentifier>{670485cd-3a26-4a54-bce8-f3ebdb3706e4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -37,7 +43,7 @@
       <Filter>Pliki źródłowe\Map</Filter>
     </ClCompile>
     <ClCompile Include="Apple.cpp">
-      <Filter>Pliki źródłowe</Filter>
+      <Filter>Pliki źródłowe\Apple</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -48,7 +54,7 @@
       <Filter>Pliki nagłówkowe\Snake</Filter>
     </ClInclude>
     <ClInclude Include="Apple.h">
-      <Filter>Pliki nagłówkowe</Filter>
+      <Filter>Pliki nagłówkowe\Apple</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

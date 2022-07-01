@@ -3,8 +3,8 @@
 Apple::Apple(const sf::Color& color) 
 {
 	sf::Vector2i randApple{
-	rand() % static_cast<int>(map_size.x / HEAD_SIZE.x),
-	rand() % static_cast<int>(map_size.y / HEAD_SIZE.y)
+	rand() % static_cast<int>(MAP_SIZE.x / HEAD_SIZE.x),
+	rand() % static_cast<int>(MAP_SIZE.y / HEAD_SIZE.y)
 	};
 	apple.setOrigin(snake_head.getOrigin());
 	apple.setPosition(
