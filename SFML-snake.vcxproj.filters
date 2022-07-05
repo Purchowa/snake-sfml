@@ -45,6 +45,9 @@
     <ClCompile Include="Apple.cpp">
       <Filter>Pliki źródłowe\Apple</Filter>
     </ClCompile>
+    <ClCompile Include="Vector2Overload.cpp">
+      <Filter>Pliki źródłowe</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Map.h">
@@ -55,6 +58,9 @@
     </ClInclude>
     <ClInclude Include="Apple.h">
       <Filter>Pliki nagłówkowe\Apple</Filter>
+    </ClInclude>
+    <ClInclude Include="Vector2Overload.h">
+      <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

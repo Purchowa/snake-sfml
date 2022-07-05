@@ -43,12 +43,12 @@ int main()
 	unsigned long long snake_frame_time{};
 	unsigned long long current_program_time{}; // current time of all frames
 
-	sf::Vector2f mapSize { 500, 500 };
+	const sf::Vector2f MAP_SIZE { 400, 400 };
 	const sf::Vector2f MAP_POSITION {500, 50};
-	const sf::Vector2f SNAKE_SIZE {50, 50};
+	const sf::Vector2f SNAKE_SIZE {20, 20};
 
 	// Lambda function 
-	auto correctProportions = [](sf::Vector2f& map_size, const sf::Vector2f& head_size) -> bool
+	auto correctProportions = [](const sf::Vector2f& map_size, const sf::Vector2f& head_size) -> bool
 	{
 		sf::Vector2f divProp = map_size / head_size;
 		if (static_cast<int>(map_size.x) % static_cast<int>(head_size.x) != 0
@@ -63,14 +63,14 @@ int main()
 		return true;
 	};
 
-	if (!correctProportions(mapSize, SNAKE_SIZE))
+	if (!correctProportions(MAP_SIZE, SNAKE_SIZE))
 	{
 		std::cout << "You've entered incorrect proportions of snake head to map size.\n";
 		return 0;
 	}
-	int snake_part_length = static_cast<int>((mapSize.x / SNAKE_SIZE.x) * (mapSize.y / SNAKE_SIZE.y));
-	Snake snake(SNAKE_SIZE, snake_part_length, MAP_POSITION, mapSize);
-	Map myMap(mapSize, MAP_POSITION, SNAKE_SIZE);
+	int snake_part_length = static_cast<int>((MAP_SIZE.x / SNAKE_SIZE.x) * (MAP_SIZE.y / SNAKE_SIZE.y));
+	Snake snake(SNAKE_SIZE, snake_part_length, MAP_POSITION, MAP_SIZE);
+	Map myMap(MAP_SIZE, MAP_POSITION, SNAKE_SIZE);
 	Apple apple(snake);
 	//short fps{};
 
