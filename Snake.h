@@ -13,6 +13,7 @@ public:
 	void bodyColission();
 	unsigned int getScore() const;
 	std::string getHeadPosition() const;
+	void increaseScore();
 
 private:
 	void defaultSnakePos();
@@ -29,8 +30,8 @@ private:
 	const sf::Vector2f HEAD_SIZE;
 	sf::Vector2f move;
 	unsigned int score;
-	sf::Vector2f map_pos;
-	sf::Vector2f map_size;
+	const sf::Vector2f MAP_POS;
+	const sf::Vector2f MAP_SIZE;
 	bool is_collided;
 	// -------------------------------------
 
@@ -40,15 +41,12 @@ private:
 
 
 	// --- SnakeHead Class ---
-	class CSnakeHead : public sf::Drawable, public sf::Transformable
+	class SnakeHead : public sf::Drawable, public sf::Transformable
 	{
 	public:
-		CSnakeHead(const sf::Vector2f& h_size, const sf::Vector2f& t_size);
-		void setSizeHead(const sf::Vector2f& h_size);
-		void setFillColorHead(const sf::Color& h_color);
-		void setSizeTongue(const sf::Vector2f& t_size);
-		void setFillColorTongue(const sf::Color& t_color);
-		sf::Vector2f getHeadSize() const;
+		SnakeHead(const sf::Vector2f& h_size, const sf::Vector2f& t_size);
+		void updateFillColorHead(const sf::Color& h_color);
+		void updateFillColorTongue(const sf::Color& t_color);
 
 	private:
 		virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
@@ -57,5 +55,6 @@ private:
 	};
 	// ------------------------
 
-	CSnakeHead snake_head;
+	SnakeHead snake_head;
+	friend class Apple;
 };

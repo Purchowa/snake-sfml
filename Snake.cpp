@@ -3,12 +3,12 @@
 Snake::Snake(const sf::Vector2f& head_size, const int& part_len, const sf::Vector2f& map_pos, const sf::Vector2f& map_size)
 	: VERTICES_NUMBER(4), PART_QUANTITY(part_len), SNAKE_PART_COLOR({ 255, 128, 0, 220 }),
 	move{ 0.f, 0.f }, HEAD_SIZE(head_size),
-	score(0), map_pos(map_pos), map_size(map_size),
+	score(0), MAP_POS(map_pos), MAP_SIZE(map_size),
 	snake_head({ head_size }, { head_size.x / 7.f, head_size.y / 1.5f }), is_collided(false)
 {
 	snake_head.setOrigin(head_size / 2.f);
-	snake_head.setFillColorHead(sf::Color::Red);
-	snake_head.setFillColorTongue(sf::Color(0, 128, 0, 230));
+	snake_head.updateFillColorHead(sf::Color::Red);
+	snake_head.updateFillColorTongue(sf::Color(0, 128, 0, 230));
 
 	int part_capacity = PART_QUANTITY * VERTICES_NUMBER;
 	part_vertices.reserve(part_capacity);
@@ -91,8 +91,7 @@ void Snake::keyEvent(const sf::Event& event)
 	{
 		if (score < PART_QUANTITY)
 		{
-			addSnakePart();
-			score++;
+			increaseScore();
 		}
 		return;
 	}
@@ -156,10 +155,10 @@ void Snake::updatePositionSnake()
 
 void Snake::mapColission()
 {
-	if (snake_head.getPosition().x < map_pos.x + 10|| 
-		snake_head.getPosition().x > map_pos.x + map_size.x ||
-		snake_head.getPosition().y < map_pos.y || 
-		snake_head.getPosition().y > map_pos.y + map_size.y
+	if (snake_head.getPosition().x < MAP_POS.x|| 
+		snake_head.getPosition().x > MAP_POS.x + MAP_SIZE.x ||
+		snake_head.getPosition().y < MAP_POS.y || 
+		snake_head.getPosition().y > MAP_POS.y + MAP_SIZE.y
 		)
 	{
 		is_collided = true;
@@ -177,7 +176,7 @@ void Snake::bodyColission()
 	*/
 	for (unsigned i = 2 * VERTICES_NUMBER; i < part_vertices.size(); i += VERTICES_NUMBER)
 	{
-		if (Snake::shapeContaintsPoint(&part_vertices[i], snake_head.getPosition()))
+		if (shapeContaintsPoint(&part_vertices[i], snake_head.getPosition()))
 		{
 			move = { 0.f, 0.f };
 			return;
@@ -197,25 +196,31 @@ std::string Snake::getHeadPosition() const
 		+ " Y: " + std::to_string(static_cast<int>(snake_head.getPosition().y)) + "\n";
 }
 
+void Snake::increaseScore()
+{
+	addSnakePart();
+	score++;
+}
+
 void Snake::defaultSnakePos()
 {
 	snake_head.setPosition({
-		(this->map_size.x / 2 + this->map_pos.x + snake_head.getOrigin().x),
-		(this->map_size.y / 2 + this->map_pos.y + snake_head.getOrigin().y)
+		(this->MAP_SIZE.x / 2.f + this->MAP_POS.x + snake_head.getOrigin().x),
+		(this->MAP_SIZE.y / 2.f + this->MAP_POS.y + snake_head.getOrigin().y)
 
 		});
 
-	float ax = 0.5 * HEAD_SIZE.x;
-	float ay = 0.5 * HEAD_SIZE.y;
-	float sx = snake_head.getPosition().x;
-	float sy = snake_head.getPosition().y;
+	float hX = 0.5 * HEAD_SIZE.x;
+	float hY = 0.5 * HEAD_SIZE.y;
+	float sX = snake_head.getPosition().x;
+	float sY = snake_head.getPosition().y;
 
-	head_vertices[0] = { sx - ax, sy + ax };
-	head_vertices[1] = { sx - ax, sy - ax };
-	head_vertices[2] = { sx + ax, sy - ax };
-	head_vertices[3] = { sx + ax, sy + ax };
+	head_vertices[0] = { sX - hX, sY + hX };
+	head_vertices[1] = { sX - hX, sY - hX };
+	head_vertices[2] = { sX + hX, sY - hX };
+	head_vertices[3] = { sX + hX, sY + hX };
 
-	if (part_vertices.size() > (size_t)2 * VERTICES_NUMBER) // size - returns number of elements. Erasing past second part
+	if (part_vertices.size() > 2ULL * VERTICES_NUMBER) // size - returns number of elements. Erasing past second part
 	{
 		std::vector <sf::Vertex>::iterator iter_part_vertices = part_vertices.begin() + 7;
 		std::vector <sf::Vector2f>::iterator iter_part_pos = last_part_position.begin() + 7;
@@ -309,59 +314,6 @@ void Snake::addSnakePart()
 	return;
 }
 
-void Snake::draw(sf::RenderTarget& target, sf::RenderStates states) const
-{
-	target.draw(snake_head, states);
-	target.draw(&part_vertices[0], part_vertices.size(), sf::Quads);
-	return;
-}
-
-// ----------- SnakeHead Class ----------
-
-Snake::CSnakeHead::CSnakeHead(const sf::Vector2f& h_size, const sf::Vector2f& t_size)
-	: head(h_size), tongue(t_size) // setting SIZE with constructor.
-{
-	tongue.setOrigin(tongue.getSize() / 2.f);
-	tongue.setPosition({ head.getSize().x / 2.f,  head.getSize().y / 4.f});
-}
-
-void Snake::CSnakeHead::setSizeHead(const sf::Vector2f& h_size)
-{
-	head.setSize(h_size);
-}
-
-void Snake::CSnakeHead::setFillColorHead(const sf::Color& h_color)
-{
-	head.setFillColor(h_color);
-}
-
-void Snake::CSnakeHead::setSizeTongue(const sf::Vector2f& t_size)
-{
-	tongue.setSize(t_size);
-}
-
-void Snake::CSnakeHead::setFillColorTongue(const sf::Color& t_color)
-{
-	tongue.setFillColor(t_color);
-}
-
-sf::Vector2f Snake::CSnakeHead::getHeadSize() const
-{
-	return head.getSize();
-}
-
-void Snake::CSnakeHead::draw(sf::RenderTarget& target, sf::RenderStates states) const
-{
-	states.transform.combine(getTransform());
-	// It combines earlier states of transformation with current ones.
-	// states.transform *= getTransform(); // Operator '*=' was overloaded
-	target.draw(head, states);
-	target.draw(tongue, states);
-}
-
-// ----------------------------------------
-
-// Protected
 bool Snake::shapeContaintsPoint(const sf::Vertex quad[], const sf::Vector2f& point) const
 {
 	sf::Vector2f center{
@@ -374,3 +326,40 @@ bool Snake::shapeContaintsPoint(const sf::Vertex quad[], const sf::Vector2f& poi
 
 	return false;
 }
+
+void Snake::draw(sf::RenderTarget& target, sf::RenderStates states) const
+{
+	target.draw(snake_head, states);
+	target.draw(&part_vertices[0], part_vertices.size(), sf::Quads);
+	return;
+}
+
+// ----------- SnakeHead Class ----------
+
+Snake::SnakeHead::SnakeHead(const sf::Vector2f& h_size, const sf::Vector2f& t_size)
+	: head(h_size), tongue(t_size) // setting SIZE with constructor.
+{
+	tongue.setOrigin(tongue.getSize() / 2.f);
+	tongue.setPosition({ head.getSize().x / 2.f,  head.getSize().y / 4.f});
+}
+
+void Snake::SnakeHead::updateFillColorHead(const sf::Color& h_color)
+{
+	head.setFillColor(h_color);
+}
+
+void Snake::SnakeHead::updateFillColorTongue(const sf::Color& t_color)
+{
+	tongue.setFillColor(t_color);
+}
+
+void Snake::SnakeHead::draw(sf::RenderTarget& target, sf::RenderStates states) const
+{
+	states.transform.combine(getTransform());
+	// It combines earlier states of transformation with current ones.
+	// states.transform *= getTransform(); // Operator '*=' was overloaded
+	target.draw(head, states);
+	target.draw(tongue, states);
+}
+
+// ----------------------------------------

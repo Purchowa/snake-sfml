@@ -5,10 +5,14 @@
 #include "Snake.h"
 #include "Apple.h"
 
+sf::Vector2f operator/(const sf::Vector2f& v1, const sf::Vector2f& v2) {
+	return { v1.x / v2.x, v1.y / v2.y };
+}
+
 int main()
 {
 
-	srand(time(NULL));
+	srand(static_cast<unsigned int>(time(NULL)));
 	system("chcp 1250");
 	system("cls");
 
@@ -27,7 +31,7 @@ int main()
 	sf::Text text;
 	text.setFont(font);
 	text.setCharacterSize(20);
-	std::string text_content = "F - STOP SNAKE\nR - RESTART\nG - ADD SCORE\nSCORE: ";
+	std::string text_content = "S - STOP SNAKE\nR - RESTART\nG - ADD SCORE\nSCORE: ";
 
 	// 1 second = 100 miliseconds = 1'000'000 microseconds
 	const unsigned int animation_frame_duration = 16'600; // microseconds
@@ -39,31 +43,35 @@ int main()
 	unsigned long long snake_frame_time{};
 	unsigned long long current_program_time{}; // current time of all frames
 
-	const sf::Vector2f map_size { 600, 200 };
-	const sf::Vector2f map_position {500, 50};
-	const sf::Vector2f snake_size {20, 20};
+	sf::Vector2f mapSize { 500, 500 };
+	const sf::Vector2f MAP_POSITION {500, 50};
+	const sf::Vector2f SNAKE_SIZE {50, 50};
 
 	// Lambda function 
-	auto checkProportions = [](const sf::Vector2f& map_size, const sf::Vector2f& head_size) -> bool
+	auto correctProportions = [](sf::Vector2f& map_size, const sf::Vector2f& head_size) -> bool
 	{
+		sf::Vector2f divProp = map_size / head_size;
 		if (static_cast<int>(map_size.x) % static_cast<int>(head_size.x) != 0
 			||
 			static_cast<int>(map_size.y) % static_cast<int>(head_size.y) != 0)
 		{
 			return false;
 		}
+		else if (static_cast<int>(divProp.x) % 2 != 0 || static_cast<int>(divProp.y) % 2 != 0) {
+			return false;
+		}
 		return true;
 	};
 
-	if (checkProportions(map_size, snake_size) == false)
+	if (!correctProportions(mapSize, SNAKE_SIZE))
 	{
 		std::cout << "You've entered incorrect proportions of snake head to map size.\n";
 		return 0;
 	}
-	int snake_part_length = (map_size.x / snake_size.x) * (map_size.y / snake_size.y);
-	Snake snake(snake_size, snake_part_length, map_position, map_size);
-	Map myMap(map_size, map_position, snake_size);
-	Apple apple(sf::Color::Green);
+	int snake_part_length = static_cast<int>((mapSize.x / SNAKE_SIZE.x) * (mapSize.y / SNAKE_SIZE.y));
+	Snake snake(SNAKE_SIZE, snake_part_length, MAP_POSITION, mapSize);
+	Map myMap(mapSize, MAP_POSITION, SNAKE_SIZE);
+	Apple apple(snake);
 	//short fps{};
 
 
@@ -103,7 +111,10 @@ int main()
 		*/
 
 		snake.bodyColission();
-		apple.appleCollision();
+		if (apple.appleCollision()) {
+			snake.increaseScore();
+			apple.updatePosition();
+		}
 
 		while (AppWindow.pollEvent(event))
 		{

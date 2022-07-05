@@ -1,32 +1,39 @@
 #include "Apple.h"
 
-Apple::Apple(const sf::Color& color) 
+Apple::Apple(const Snake& snakeObj) : snakeObj(snakeObj)
 {
 	sf::Vector2i randApple{
-	rand() % static_cast<int>(MAP_SIZE.x / HEAD_SIZE.x),
-	rand() % static_cast<int>(MAP_SIZE.y / HEAD_SIZE.y)
+	rand() % static_cast<int>(snakeObj.MAP_SIZE.x / snakeObj.HEAD_SIZE.x),
+	rand() % static_cast<int>(snakeObj.MAP_SIZE.y / snakeObj.HEAD_SIZE.y)
 	};
-	apple.setOrigin(snake_head.getOrigin());
+	apple.setOrigin(snakeObj.snake_head.getOrigin());
 	apple.setPosition(
-		{ randApple.x * HEAD_SIZE.x + map_pos.x + snake_head.getOrigin().x },
-		{ randApple.y * HEAD_SIZE.y + map_pos.y + snake_head.getOrigin().y }
+		{ randApple.x * snakeObj.HEAD_SIZE.x + snakeObj.MAP_POS.x + snakeObj.snake_head.getOrigin().x },
+		{ randApple.y * snakeObj.HEAD_SIZE.y + snakeObj.MAP_POS.y + snakeObj.snake_head.getOrigin().y }
 	);
-	apple.setFillColor(color);
-	apple.setSize(HEAD_SIZE);
+	apple.setFillColor(sf::Color::Green);
+	apple.setSize(snakeObj.HEAD_SIZE);
 }
 
-void Apple::appleCollision()
+bool Apple::appleCollision()
 {
-	if (snake_head.getPosition() == apple.getPosition())
-	{
-		std::cout << apple.getPosition().x << "\n";
-	}
-	return;
+	if (snakeObj.snake_head.getPosition() == apple.getPosition())
+		return true;
+
+	return false;
 }
 
-void Apple::updatePositionApple()
+void Apple::updatePosition()
 {
-	return;
+	sf::Vector2i randApple{
+	rand() % static_cast<int>(snakeObj.MAP_SIZE.x / snakeObj.HEAD_SIZE.x),
+	rand() % static_cast<int>(snakeObj.MAP_SIZE.y / snakeObj.HEAD_SIZE.y)
+	};
+
+	apple.setPosition(
+		{ randApple.x * snakeObj.HEAD_SIZE.x + snakeObj.MAP_POS.x + snakeObj.snake_head.getOrigin().x },
+		{ randApple.y * snakeObj.HEAD_SIZE.y + snakeObj.MAP_POS.y + snakeObj.snake_head.getOrigin().y }
+	);
 }
 
 void Apple::draw(sf::RenderTarget& target, sf::RenderStates states) const
