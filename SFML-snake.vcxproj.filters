@@ -48,6 +48,9 @@
     <ClCompile Include="Vector2Overload.cpp">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
+    <ClCompile Include="SnakeHead.cpp">
+      <Filter>Pliki źródłowe\Snake</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Map.h">
@@ -61,6 +64,9 @@
     </ClInclude>
     <ClInclude Include="Vector2Overload.h">
       <Filter>Pliki nagłówkowe</Filter>
+    </ClInclude>
+    <ClInclude Include="SnakeHead.h">
+      <Filter>Pliki nagłówkowe\Snake</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

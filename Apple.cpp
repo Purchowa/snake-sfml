@@ -34,7 +34,7 @@ void Apple::updatePosition()
 		   randApple.y * snakeObj.HEAD_SIZE.y + snakeObj.MAP_POS.y + snakeObj.snake_head.getOrigin().y
 		};
 
-		std::cout << (n++ > 1 ? n : 0) << '\n';
+		// std::cout << (n++ > 1 ? n : 0) << '\n';
 		
 	}while (bodyContainsApple(zeroPosition));
 

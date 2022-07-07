@@ -5,10 +5,6 @@
 #include "Snake.h"
 #include "Apple.h"
 
-sf::Vector2f operator/(const sf::Vector2f& v1, const sf::Vector2f& v2) {
-	return { v1.x / v2.x, v1.y / v2.y };
-}
-
 int main()
 {
 
@@ -36,7 +32,7 @@ int main()
 	// 1 second = 100 miliseconds = 1'000'000 microseconds
 	const unsigned int animation_frame_duration = 16'600; // microseconds
 	const unsigned int logic_frame_duration = 4'000;
-	const unsigned int snake_frame_duration = 120'000;
+	const unsigned int snake_frame_duration = 150'000;
 
 	unsigned long long animation_frame_time{};
 	unsigned long long logic_frame_time{};

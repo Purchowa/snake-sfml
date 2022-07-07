@@ -4,7 +4,7 @@ Snake::Snake(const sf::Vector2f& head_size, const int& part_len, const sf::Vecto
 	: VERTICES_NUMBER(4), PART_QUANTITY(part_len), SNAKE_PART_COLOR({ 255, 128, 0, 220 }),
 	move{ 0.f, 0.f }, HEAD_SIZE(head_size),
 	score(0), MAP_POS(map_pos), MAP_SIZE(map_size),
-	snake_head({ head_size }, { head_size.x / 7.f, head_size.y / 1.5f }), is_collided(false)
+	snake_head({ head_size }, { head_size.x / 7.f, head_size.y }), is_collided(false)
 {
 	snake_head.setOrigin(head_size / 2.f);
 	snake_head.updateFillColorHead(sf::Color::Red);
@@ -333,33 +333,3 @@ void Snake::draw(sf::RenderTarget& target, sf::RenderStates states) const
 	target.draw(&part_vertices[0], part_vertices.size(), sf::Quads);
 	return;
 }
-
-// ----------- SnakeHead Class ----------
-
-Snake::SnakeHead::SnakeHead(const sf::Vector2f& h_size, const sf::Vector2f& t_size)
-	: head(h_size), tongue(t_size) // setting SIZE with constructor.
-{
-	tongue.setOrigin(tongue.getSize() / 2.f);
-	tongue.setPosition({ head.getSize().x / 2.f,  head.getSize().y / 4.f});
-}
-
-void Snake::SnakeHead::updateFillColorHead(const sf::Color& h_color)
-{
-	head.setFillColor(h_color);
-}
-
-void Snake::SnakeHead::updateFillColorTongue(const sf::Color& t_color)
-{
-	tongue.setFillColor(t_color);
-}
-
-void Snake::SnakeHead::draw(sf::RenderTarget& target, sf::RenderStates states) const
-{
-	states.transform.combine(getTransform());
-	// It combines earlier states of transformation with current ones.
-	// states.transform *= getTransform(); // Operator '*=' was overloaded
-	target.draw(head, states);
-	target.draw(tongue, states);
-}
-
-// ----------------------------------------

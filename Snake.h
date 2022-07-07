@@ -1,10 +1,13 @@
 #pragma once
 #include "SFML/Graphics.hpp"
+#include "SnakeHead.h"
 #include <iostream>
 #include <vector>
 
 class Snake : public sf::Drawable
 {
+	friend class Apple;
+
 public:
 	Snake(const sf::Vector2f& head_size, const int& part_len, const sf::Vector2f& map_pos, const sf::Vector2f& map_size);
 	void keyEvent(const sf::Event& event);
@@ -39,22 +42,5 @@ private:
 	std::vector<sf::Vector2f> last_part_position;
 	std::vector<sf::Vertex> part_vertices;
 
-
-	// --- SnakeHead Class ---
-	class SnakeHead : public sf::Drawable, public sf::Transformable
-	{
-	public:
-		SnakeHead(const sf::Vector2f& h_size, const sf::Vector2f& t_size);
-		void updateFillColorHead(const sf::Color& h_color);
-		void updateFillColorTongue(const sf::Color& t_color);
-
-	private:
-		virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
-		sf::RectangleShape head;
-		sf::RectangleShape tongue;
-	};
-	// ------------------------
-
 	SnakeHead snake_head;
-	friend class Apple;
 };
