@@ -51,6 +51,9 @@
     <ClCompile Include="SnakeHead.cpp">
       <Filter>Pliki źródłowe\Snake</Filter>
     </ClCompile>
+    <ClCompile Include="Ray.cpp">
+      <Filter>Pliki źródłowe\Snake</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Map.h">
@@ -66,6 +69,9 @@
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
     <ClInclude Include="SnakeHead.h">
+      <Filter>Pliki nagłówkowe\Snake</Filter>
+    </ClInclude>
+    <ClInclude Include="Ray.h">
       <Filter>Pliki nagłówkowe\Snake</Filter>
     </ClInclude>
   </ItemGroup>

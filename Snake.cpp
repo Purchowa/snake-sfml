@@ -4,8 +4,11 @@ Snake::Snake(const sf::Vector2f& head_size, const int& part_len, const sf::Vecto
 	: VERTICES_NUMBER(4), PART_QUANTITY(part_len), SNAKE_PART_COLOR({ 255, 128, 0, 220 }),
 	move{ 0.f, 0.f }, HEAD_SIZE(head_size),
 	score(0), MAP_POS(map_pos), MAP_SIZE(map_size),
-	snake_head({ head_size }, { head_size.x / 7.f, head_size.y }), is_collided(false)
+	snake_head({ head_size }, { head_size.x / 7.f, head_size.y }), is_collided(false),
+	rays(3, 2 * head_size.x, head_size / 2.f)
 {
+	rays.setOrigin(head_size / 2.f);
+
 	snake_head.setOrigin(head_size / 2.f);
 	snake_head.updateFillColorHead(sf::Color::Red);
 	snake_head.updateFillColorTongue(sf::Color(0, 128, 0, 230));
@@ -102,6 +105,7 @@ void Snake::keyEvent(const sf::Event& event)
 		move = { 0.f, 0.f };
 		last_position = { 0.f, 0.f };
 		snake_head.setRotation(0.f);
+		rays.setRotation(0.f);
 
 		return;
 	}
@@ -114,6 +118,7 @@ void Snake::keyEvent(const sf::Event& event)
 	if (abs(wanted_rotation - snake_head.getRotation()) != 180.f && last_position != snake_head.getPosition())
 	{
 		snake_head.setRotation(wanted_rotation);
+		rays.setRotation(wanted_rotation);
 		// rotateHeadVertices(static_cast<int>(wanted_rotation)); <-- Not needed in static colors of parts and head
 		move = wanted_move;
 		last_position = snake_head.getPosition();
@@ -138,6 +143,9 @@ void Snake::updatePositionSnake()
 
 		snake_head.move(move);
 		// Moving head
+
+		// Moving rays
+		rays.move(move);
 		
 		for (unsigned i = 0; i < VERTICES_NUMBER; i++)
 		{
@@ -155,7 +163,7 @@ void Snake::updatePositionSnake()
 
 void Snake::mapColission()
 {
-	if (snake_head.getPosition().x < MAP_POS.x|| 
+	if (snake_head.getPosition().x < MAP_POS.x || 
 		snake_head.getPosition().x > MAP_POS.x + MAP_SIZE.x ||
 		snake_head.getPosition().y < MAP_POS.y || 
 		snake_head.getPosition().y > MAP_POS.y + MAP_SIZE.y
@@ -207,9 +215,11 @@ void Snake::defaultSnakePos()
 	snake_head.setPosition({
 		(this->MAP_SIZE.x / 2.f + this->MAP_POS.x + snake_head.getOrigin().x),
 		(this->MAP_SIZE.y / 2.f + this->MAP_POS.y + snake_head.getOrigin().y)
-
 		});
 
+	rays.setPosition(snake_head.getPosition());
+
+	// Body
 	float hX = 0.5 * HEAD_SIZE.x;
 	float hY = 0.5 * HEAD_SIZE.y;
 	float sX = snake_head.getPosition().x;
@@ -330,6 +340,7 @@ bool Snake::shapeContaintsPoint(const sf::Vertex quad[], const sf::Vector2f& poi
 void Snake::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
 	target.draw(snake_head, states);
+	target.draw(rays, states);
 	target.draw(&part_vertices[0], part_vertices.size(), sf::Quads);
 	return;
 }

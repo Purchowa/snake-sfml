@@ -1,8 +1,10 @@
 #pragma once
-#include "SFML/Graphics.hpp"
-#include "SnakeHead.h"
 #include <iostream>
 #include <vector>
+#include "SFML/Graphics.hpp"
+#include "SnakeHead.h"
+#include "Ray.h"
+
 
 class Snake : public sf::Drawable
 {
@@ -43,4 +45,5 @@ private:
 	std::vector<sf::Vertex> part_vertices;
 
 	SnakeHead snake_head;
+	Ray rays;
 };

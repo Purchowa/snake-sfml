@@ -1,5 +1,8 @@
 #pragma once
+#include <iostream>
 #include "SFML/Graphics.hpp"
+#include "Vector2Overload.h"
+
 
 class SnakeHead : public sf::Drawable, public sf::Transformable
 {
@@ -13,6 +16,7 @@ private:
 	sf::RectangleShape head;
 	sf::RectangleShape tongue;
 	sf::VertexArray Rays;
+	sf::Vector2f rayOrigin;
 
 	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 };
